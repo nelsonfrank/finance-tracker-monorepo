@@ -1,0 +1,6 @@
+.env
+.envrc
+
+bin
+tmp
+build-errors.log

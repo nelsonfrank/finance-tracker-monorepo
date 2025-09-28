@@ -1,0 +1,8 @@
+export ADDR=":8090"
+export ENV="development"
+
+# Database
+export DB_ADDR="postgres://admin:adminpassword@localhost:5435/go-api-template?sslmode=disable"
+
+# Resend Email
+export RESEND_API_KEY="re_xxxxxxxx_xxxxxxxxxxxx"
