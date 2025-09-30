@@ -1,9 +1,9 @@
 services:
   db:
     image: postgres:16.3
-    container_name: go-api-template-db
+    container_name: finance-db
     environment:
-      POSTGRES_DB: go-api-template
+      POSTGRES_DB: finance-tracker
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: adminpassword
     volumes:
