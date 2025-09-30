@@ -41,7 +41,7 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	u, err := h.service.RegisterUser(body.Name, body.Email, body.Password)
+	u, err := h.service.RegisterUser(body.FirstName, body.LastName, body.Email, body.Password)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

@@ -6,12 +6,307 @@ package db
 
 import (
 	"database/sql"
+	"database/sql/driver"
+	"fmt"
+	"time"
+
+	"github.com/sqlc-dev/pqtype"
 )
 
-type User struct {
+type AccountType string
+
+const (
+	AccountTypeBank       AccountType = "bank"
+	AccountTypeCredit     AccountType = "credit"
+	AccountTypeWallet     AccountType = "wallet"
+	AccountTypeInvestment AccountType = "investment"
+)
+
+func (e *AccountType) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = AccountType(s)
+	case string:
+		*e = AccountType(s)
+	default:
+		return fmt.Errorf("unsupported scan type for AccountType: %T", src)
+	}
+	return nil
+}
+
+type NullAccountType struct {
+	AccountType AccountType `json:"account_type"`
+	Valid       bool        `json:"valid"` // Valid is true if AccountType is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullAccountType) Scan(value interface{}) error {
+	if value == nil {
+		ns.AccountType, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.AccountType.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullAccountType) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.AccountType), nil
+}
+
+type CategoryType string
+
+const (
+	CategoryTypeIncome  CategoryType = "income"
+	CategoryTypeExpense CategoryType = "expense"
+)
+
+func (e *CategoryType) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = CategoryType(s)
+	case string:
+		*e = CategoryType(s)
+	default:
+		return fmt.Errorf("unsupported scan type for CategoryType: %T", src)
+	}
+	return nil
+}
+
+type NullCategoryType struct {
+	CategoryType CategoryType `json:"category_type"`
+	Valid        bool         `json:"valid"` // Valid is true if CategoryType is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullCategoryType) Scan(value interface{}) error {
+	if value == nil {
+		ns.CategoryType, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.CategoryType.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullCategoryType) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.CategoryType), nil
+}
+
+type InvestmentTypes string
+
+const (
+	InvestmentTypesStock  InvestmentTypes = "stock"
+	InvestmentTypesBond   InvestmentTypes = "bond"
+	InvestmentTypesCrypto InvestmentTypes = "crypto"
+	InvestmentTypesFund   InvestmentTypes = "fund"
+)
+
+func (e *InvestmentTypes) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = InvestmentTypes(s)
+	case string:
+		*e = InvestmentTypes(s)
+	default:
+		return fmt.Errorf("unsupported scan type for InvestmentTypes: %T", src)
+	}
+	return nil
+}
+
+type NullInvestmentTypes struct {
+	InvestmentTypes InvestmentTypes `json:"investment_types"`
+	Valid           bool            `json:"valid"` // Valid is true if InvestmentTypes is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullInvestmentTypes) Scan(value interface{}) error {
+	if value == nil {
+		ns.InvestmentTypes, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.InvestmentTypes.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullInvestmentTypes) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.InvestmentTypes), nil
+}
+
+type PeriodType string
+
+const (
+	PeriodTypeWeekly  PeriodType = "weekly"
+	PeriodTypeMonthly PeriodType = "monthly"
+	PeriodTypeYearly  PeriodType = "yearly"
+)
+
+func (e *PeriodType) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = PeriodType(s)
+	case string:
+		*e = PeriodType(s)
+	default:
+		return fmt.Errorf("unsupported scan type for PeriodType: %T", src)
+	}
+	return nil
+}
+
+type NullPeriodType struct {
+	PeriodType PeriodType `json:"period_type"`
+	Valid      bool       `json:"valid"` // Valid is true if PeriodType is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullPeriodType) Scan(value interface{}) error {
+	if value == nil {
+		ns.PeriodType, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.PeriodType.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullPeriodType) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.PeriodType), nil
+}
+
+type TransactionType string
+
+const (
+	TransactionTypeIncome  TransactionType = "income"
+	TransactionTypeExpense TransactionType = "expense"
+)
+
+func (e *TransactionType) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = TransactionType(s)
+	case string:
+		*e = TransactionType(s)
+	default:
+		return fmt.Errorf("unsupported scan type for TransactionType: %T", src)
+	}
+	return nil
+}
+
+type NullTransactionType struct {
+	TransactionType TransactionType `json:"transaction_type"`
+	Valid           bool            `json:"valid"` // Valid is true if TransactionType is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullTransactionType) Scan(value interface{}) error {
+	if value == nil {
+		ns.TransactionType, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.TransactionType.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullTransactionType) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.TransactionType), nil
+}
+
+type Account struct {
+	ID        int32           `json:"id"`
+	UserID    int32           `json:"user_id"`
+	Name      string          `json:"name"`
+	Type      AccountType     `json:"type"`
+	Balance   sql.NullFloat64 `json:"balance"`
+	CreatedAt sql.NullTime    `json:"created_at"`
+	UpdatedAt sql.NullTime    `json:"updated_at"`
+}
+
+type Budget struct {
+	ID          int32           `json:"id"`
+	UserID      int32           `json:"user_id"`
+	CategoryID  int32           `json:"category_id"`
+	Amount      float64         `json:"amount"`
+	Period      PeriodType      `json:"period"`
+	StartDate   time.Time       `json:"start_date"`
+	EndDate     sql.NullTime    `json:"end_date"`
+	SpentAmount sql.NullFloat64 `json:"spent_amount"`
+	CreatedAt   sql.NullTime    `json:"created_at"`
+}
+
+type Category struct {
 	ID        int32        `json:"id"`
+	UserID    int32        `json:"user_id"`
 	Name      string       `json:"name"`
-	Email     string       `json:"email"`
-	Password  string       `json:"password"`
+	Type      CategoryType `json:"type"`
+	IsDefault sql.NullBool `json:"is_default"`
 	CreatedAt sql.NullTime `json:"created_at"`
+}
+
+type Investment struct {
+	ID           int32                 `json:"id"`
+	UserID       int32                 `json:"user_id"`
+	Name         string                `json:"name"`
+	Type         InvestmentTypes       `json:"type"`
+	InitialValue float64               `json:"initial_value"`
+	CurrentValue sql.NullFloat64       `json:"current_value"`
+	PurchaseDate time.Time             `json:"purchase_date"`
+	Metadata     pqtype.NullRawMessage `json:"metadata"`
+	CreatedAt    sql.NullTime          `json:"created_at"`
+	UpdatedAt    sql.NullTime          `json:"updated_at"`
+}
+
+type SavingsGoal struct {
+	ID            int32           `json:"id"`
+	UserID        int32           `json:"user_id"`
+	Name          string          `json:"name"`
+	TargetAmount  float64         `json:"target_amount"`
+	CurrentAmount sql.NullFloat64 `json:"current_amount"`
+	Deadline      sql.NullTime    `json:"deadline"`
+	Progress      sql.NullString  `json:"progress"`
+	CreatedAt     sql.NullTime    `json:"created_at"`
+	UpdatedAt     sql.NullTime    `json:"updated_at"`
+}
+
+type Transaction struct {
+	ID          int32                 `json:"id"`
+	UserID      int32                 `json:"user_id"`
+	AccountID   int32                 `json:"account_id"`
+	CategoryID  int32                 `json:"category_id"`
+	Amount      float64               `json:"amount"`
+	Type        TransactionType       `json:"type"`
+	Date        time.Time             `json:"date"`
+	Description sql.NullString        `json:"description"`
+	IsRecurring sql.NullBool          `json:"is_recurring"`
+	Metadata    pqtype.NullRawMessage `json:"metadata"`
+	CreatedAt   sql.NullTime          `json:"created_at"`
+	UpdatedAt   sql.NullTime          `json:"updated_at"`
+	DeletedAt   sql.NullTime          `json:"deleted_at"`
+}
+
+type User struct {
+	ID           int32          `json:"id"`
+	Email        string         `json:"email"`
+	PasswordHash string         `json:"password_hash"`
+	FirstName    sql.NullString `json:"first_name"`
+	LastName     sql.NullString `json:"last_name"`
+	CreatedAt    sql.NullTime   `json:"created_at"`
+	UpdatedAt    sql.NullTime   `json:"updated_at"`
+	DeletedAt    sql.NullTime   `json:"deleted_at"`
 }

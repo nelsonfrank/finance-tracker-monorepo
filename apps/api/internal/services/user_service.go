@@ -13,8 +13,8 @@ func NewUserService(r domain.UserRepository) *UserService {
 	return &UserService{r}
 }
 
-func (s *UserService) RegisterUser(name, email, password string) (domain.User, error) {
-	return s.Repo.Create(name, email, password)
+func (s *UserService) RegisterUser(firstName, lastName, email, password string) (domain.User, error) {
+	return s.Repo.Create(firstName, lastName, email, password)
 }
 
 func (s *UserService) GetUserByID(id int64) (domain.User, error) {

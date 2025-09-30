@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/nelsonfrank/backend-api-go/internal/db"
 	"github.com/nelsonfrank/backend-api-go/internal/domain"
@@ -20,15 +21,15 @@ func (r *userRepository) GetByID(id int64) (domain.User, error) {
 	if err != nil {
 		return domain.User{}, err
 	}
-	return domain.User{ID: int64(u.ID), Name: u.Name, Email: u.Email}, nil
+	return domain.User{ID: int64(u.ID), FirstName: u.FirstName.String, LastName: u.LastName.String, Email: u.Email}, nil
 }
 
-func (r *userRepository) Create(name, email, password string) (domain.User, error) {
-	u, err := r.q.CreateUser(context.Background(), db.CreateUserParams{Name: name, Email: email, Password: password})
+func (r *userRepository) Create(firstName, lastName, email, password string) (domain.User, error) {
+	u, err := r.q.CreateUser(context.Background(), db.CreateUserParams{FirstName: sql.NullString{String: firstName, Valid: true}, LastName: sql.NullString{String: lastName, Valid: true}, Email: email, PasswordHash: password})
 	if err != nil {
 		return domain.User{}, err
 	}
-	return domain.User{ID: int64(u.ID), Name: u.Name, Email: u.Email}, nil
+	return domain.User{ID: int64(u.ID), FirstName: u.FirstName.String, LastName: u.LastName.String, Email: u.Email}, nil
 }
 
 func (r *userRepository) ListAll(arg db.ListUsersParams) ([]domain.User, error) {
@@ -39,7 +40,7 @@ func (r *userRepository) ListAll(arg db.ListUsersParams) ([]domain.User, error) 
 
 	var users []domain.User
 	for _, u := range us {
-		users = append(users, domain.User{ID: int64(u.ID), Name: u.Name, Email: u.Email})
+		users = append(users, domain.User{ID: int64(u.ID), FirstName: u.FirstName.String, LastName: u.LastName.String, Email: u.Email})
 	}
 	return users, nil
 }

@@ -29,7 +29,7 @@ CREATE TYPE "investment_types" AS ENUM (
 );
 
 CREATE TABLE "users" (
-  "id" integer PRIMARY KEY,
+  "id" integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   "email" varchar NOT NULL,
   "password_hash" varchar NOT NULL,
   "first_name" varchar,
@@ -40,7 +40,7 @@ CREATE TABLE "users" (
 );
 
 CREATE TABLE "accounts" (
-  "id" integer PRIMARY KEY,
+  "id" integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   "user_id" integer NOT NULL,
   "name" varchar NOT NULL,
   "type" account_type NOT NULL,
@@ -50,7 +50,7 @@ CREATE TABLE "accounts" (
 );
 
 CREATE TABLE "categories" (
-  "id" integer PRIMARY KEY,
+  "id" integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   "user_id" integer NOT NULL,
   "name" varchar NOT NULL,
   "type" category_type NOT NULL,
@@ -59,7 +59,7 @@ CREATE TABLE "categories" (
 );
 
 CREATE TABLE "transactions" (
-  "id" integer PRIMARY KEY,
+  "id" integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   "user_id" integer NOT NULL,
   "account_id" integer NOT NULL,
   "category_id" integer NOT NULL,
@@ -75,7 +75,7 @@ CREATE TABLE "transactions" (
 );
 
 CREATE TABLE "budgets" (
-  "id" integer PRIMARY KEY,
+  "id" integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   "user_id" integer NOT NULL,
   "category_id" integer NOT NULL,
   "amount" float NOT NULL,
@@ -87,7 +87,7 @@ CREATE TABLE "budgets" (
 );
 
 CREATE TABLE "savings_goals" (
-  "id" integer PRIMARY KEY,
+  "id" integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   "user_id" integer NOT NULL,
   "name" varchar NOT NULL,
   "target_amount" float NOT NULL,
@@ -99,7 +99,7 @@ CREATE TABLE "savings_goals" (
 );
 
 CREATE TABLE "investments" (
-  "id" integer PRIMARY KEY,
+  "id" integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   "user_id" integer NOT NULL,
   "name" varchar NOT NULL,
   "type" investment_types NOT NULL,
