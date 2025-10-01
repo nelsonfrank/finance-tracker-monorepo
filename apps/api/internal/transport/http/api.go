@@ -27,6 +27,7 @@ func (api *API) Router() http.Handler {
 
 	// v1 routes
 	r.Route("/api/v1", func(r chi.Router) {
+		r.Mount("/auth", v1.NewAuthHandler(api.services.Auth).Routes())
 		r.Mount("/users", v1.NewUserHandler(api.services.User).Routes())
 	})
 

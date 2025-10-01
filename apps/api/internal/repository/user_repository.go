@@ -44,3 +44,11 @@ func (r *userRepository) ListAll(arg db.ListUsersParams) ([]domain.User, error) 
 	}
 	return users, nil
 }
+
+func (r *userRepository) GetByEmail(email string) (domain.User, error) {
+	u, err := r.q.GetUserByEmail(context.Background(), email)
+	if err != nil {
+		return domain.User{}, err
+	}
+	return domain.User{ID: int64(u.ID), FirstName: u.FirstName.String, LastName: u.LastName.String, Email: u.Email, PasswordHash: u.PasswordHash}, nil
+}

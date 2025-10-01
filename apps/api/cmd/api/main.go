@@ -4,6 +4,7 @@ import (
 	"context"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
+	"github.com/nelsonfrank/backend-api-go/internal/auth"
 	"github.com/nelsonfrank/backend-api-go/internal/config"
 	"github.com/nelsonfrank/backend-api-go/internal/db"
 	"github.com/nelsonfrank/backend-api-go/internal/repository"
@@ -30,8 +31,11 @@ func main() {
 	// Initialize repositories
 	repos := repository.NewRepositories(conn)
 
+	// Initialize JWT authenticator
+	jwtAuth := auth.NewJWTAuthenticator(app.config.JWTSecret, app.config.JWTAudience, app.config.JWTIssuer)
+
 	// Initialize services
-	services := services.NewServices(repos)
+	services := services.NewServices(repos, jwtAuth)
 
 	// Initialize API
 	api := transport.NewAPI(services)

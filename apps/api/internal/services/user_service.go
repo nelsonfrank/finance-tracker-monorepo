@@ -1,8 +1,11 @@
 package services
 
 import (
+	"errors"
+
 	"github.com/nelsonfrank/backend-api-go/internal/db"
 	"github.com/nelsonfrank/backend-api-go/internal/domain"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type UserService struct {
@@ -14,7 +17,17 @@ func NewUserService(r domain.UserRepository) *UserService {
 }
 
 func (s *UserService) RegisterUser(firstName, lastName, email, password string) (domain.User, error) {
-	return s.Repo.Create(firstName, lastName, email, password)
+	_, err := s.Repo.GetByEmail(email)
+	if err == nil {
+		return domain.User{}, errors.New("user already exists")
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return domain.User{}, err
+	}
+
+	return s.Repo.Create(firstName, lastName, email, string(hashedPassword))
 }
 
 func (s *UserService) GetUserByID(id int64) (domain.User, error) {
