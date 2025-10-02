@@ -9,22 +9,21 @@ import (
 	"github.com/nelsonfrank/backend-api-go/internal/db"
 	"github.com/nelsonfrank/backend-api-go/internal/repository"
 	"github.com/nelsonfrank/backend-api-go/internal/services"
-	transport "github.com/nelsonfrank/backend-api-go/internal/transport/http"
 	"go.uber.org/zap"
 )
 
 func main() {
-	// Initialize application
-	app := application{
-		config: config.Load(),
-		logger: zap.Must(zap.NewProduction()).Sugar(),
-	}
-	defer app.logger.Sync()
+	// Initialize config
+	config := config.Load()
+
+	// Initialize logger
+	logger := zap.Must(zap.NewProduction()).Sugar()
+	defer logger.Sync()
 
 	// Initialize database connection
-	conn, err := db.Connect(context.Background(), app.config.DBDSN)
+	conn, err := db.Connect(context.Background(), config.DBDSN)
 	if err != nil {
-		app.logger.Fatal(err)
+		logger.Fatal(err)
 	}
 	defer conn.Close()
 
@@ -32,16 +31,22 @@ func main() {
 	repos := repository.NewRepositories(conn)
 
 	// Initialize JWT authenticator
-	jwtAuth := auth.NewJWTAuthenticator(app.config.JWTSecret, app.config.JWTAudience, app.config.JWTIssuer)
+	jwtAuth := auth.NewJWTAuthenticator(config.JWTSecret, config.JWTAudience, config.JWTIssuer)
 
 	// Initialize services
 	services := services.NewServices(repos, jwtAuth)
 
-	// Initialize API
-	api := transport.NewAPI(services)
+	app := application{
+		config:        config,
+		logger:        logger,
+		authenticator: jwtAuth,
+		db:            conn,
+		repositories:  repos,
+		services:      services,
+	}
 
 	// Run application
-	if err := app.run(api.Router()); err != nil {
-		app.logger.Fatal(err)
+	if err := app.run(app.mount()); err != nil {
+		logger.Fatal(err)
 	}
 }
