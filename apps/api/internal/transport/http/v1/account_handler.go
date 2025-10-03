@@ -1,7 +1,9 @@
 package v1
 
 import (
+	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -90,9 +92,66 @@ func (h *AccountHandler) ListAccounts(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *AccountHandler) UpdateAccount(w http.ResponseWriter, r *http.Request) {
+	idStr := chi.URLParam(r, "id")
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		http.Error(w, "invalid id", http.StatusBadRequest)
+		return
+	}
 
+	var account dto.UpdateAccountDTO
+
+	if err := json.NewDecoder(r.Body).Decode(&account); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if err := validator.Validate.Struct(account); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	acc, error := h.service.GetAccountByID(id)
+	if error != nil {
+		if errors.Is(error, sql.ErrNoRows) {
+			http.Error(w, "account not found", http.StatusNotFound)
+			return
+		}
+		http.Error(w, error.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	updatedAccount, err := h.service.UpdateAccount(acc.ID, account)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	json.NewEncoder(w).Encode(updatedAccount)
 }
 
 func (h *AccountHandler) DeleteAccount(w http.ResponseWriter, r *http.Request) {
+	idStr := chi.URLParam(r, "id")
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		http.Error(w, "invalid id", http.StatusBadRequest)
+		return
+	}
 
+	acc, error := h.service.GetAccountByID(id)
+	if error != nil {
+		if errors.Is(error, sql.ErrNoRows) {
+			http.Error(w, "account not found", http.StatusNotFound)
+			return
+		}
+		http.Error(w, error.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if err := h.service.DeleteAccount(acc.ID); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"message": "account deleted successfully",
+	})
 }

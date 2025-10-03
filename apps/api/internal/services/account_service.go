@@ -33,3 +33,11 @@ func (s *AccountService) GetAccountByID(id int64) (domain.Account, error) {
 func (s *AccountService) ListAccounts(args db.ListAccountsParams) ([]domain.Account, error) {
 	return s.Repo.List(args)
 }
+
+func (s *AccountService) UpdateAccount(id int64, account dto.UpdateAccountDTO) (domain.Account, error) {
+	return s.Repo.Update(id, account.Name, account.Balance, db.AccountType(account.Type))
+}
+
+func (s *AccountService) DeleteAccount(id int64) error {
+	return s.Repo.Delete(id)
+}

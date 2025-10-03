@@ -7,3 +7,9 @@ type CreateAccountDTO struct {
 	Type    db.AccountType `json:"type" validate:"required,oneof=bank credit wallet investment"`
 	Balance float64        `json:"balance" validate:"required"`
 }
+
+type UpdateAccountDTO struct {
+	Name    string         `json:"name" validate:"required"`
+	Type    db.AccountType `json:"type" validate:"required,oneof=bank credit wallet investment"`
+	Balance float64        `json:"balance" validate:"required"`
+}

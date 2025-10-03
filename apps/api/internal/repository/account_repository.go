@@ -48,3 +48,20 @@ func (r *accountRepository) List(args db.ListAccountsParams) ([]domain.Account, 
 	}
 	return accounts, nil
 }
+
+func (r *accountRepository) Update(id int64, name string, amount float64, accountType db.AccountType) (domain.Account, error) {
+	i, err := r.q.UpdateAccount(context.Background(), db.UpdateAccountParams{
+		ID:      int32(id),
+		Name:    name,
+		Type:    accountType,
+		Balance: sql.NullFloat64{Float64: amount, Valid: true},
+	})
+	if err != nil {
+		return domain.Account{}, err
+	}
+	return domain.Account{ID: int64(i.ID), Name: i.Name, Type: i.Type, Balance: i.Balance.Float64, UserID: int64(i.UserID)}, nil
+}
+
+func (r *accountRepository) Delete(id int64) error {
+	return r.q.DeleteAccount(context.Background(), int32(id))
+}
