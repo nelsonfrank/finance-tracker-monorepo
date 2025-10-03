@@ -9,11 +9,8 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/nelsonfrank/backend-api-go/internal/domain"
+	"github.com/nelsonfrank/backend-api-go/internal/utils"
 )
-
-type userContextKey string
-
-const userCtx userContextKey = "user"
 
 func (app *application) AuthTokenMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -52,7 +49,7 @@ func (app *application) AuthTokenMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		ctx = context.WithValue(ctx, userCtx, user)
+		ctx = utils.WithUser(ctx, &user)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
@@ -100,7 +97,7 @@ func (app *application) RefreshTokenMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		ctx = context.WithValue(ctx, userCtx, user)
+		ctx = utils.WithUser(ctx, &user)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
