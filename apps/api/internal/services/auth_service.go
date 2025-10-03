@@ -36,7 +36,7 @@ func (s *AuthService) Login(email, password string) (*dto.LoginResponseDTO, erro
 		return nil, errors.New("invalid password")
 	}
 
-	claims := s.Auth.JwtClaimGenerator(uint(u.ID), time.Duration(time.Second*120), cfg.JWTIssuer, cfg.JWTAudience)
+	claims := s.Auth.JwtClaimGenerator(uint(u.ID), time.Duration(time.Minute*120), cfg.JWTIssuer, cfg.JWTAudience)
 	accessToken, err := s.Auth.GenerateToken(claims)
 	if err != nil {
 		return nil, err
@@ -51,7 +51,7 @@ func (s *AuthService) Login(email, password string) (*dto.LoginResponseDTO, erro
 	return &dto.LoginResponseDTO{
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
-		ExpiresIn:    time.Second * 120,
+		ExpiresIn:    time.Minute * 120,
 		User:         u,
 	}, nil
 }
