@@ -21,6 +21,7 @@ func (app *application) mount() http.Handler {
 			r.Use(app.AuthTokenMiddleware)
 			r.Mount("/users", v1.NewUserHandler(app.services.User).Routes())
 			r.Mount("/accounts", v1.NewAccountHandler(app.services.Account).Routes())
+			r.Mount("/categories", v1.NewCategoryHandler(app.services.Category).Routes())
 		})
 	})
 

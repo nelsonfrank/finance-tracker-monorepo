@@ -6,15 +6,17 @@ import (
 )
 
 type Services struct {
-	User    *UserService
-	Auth    *AuthService
-	Account *AccountService
+	User     *UserService
+	Auth     *AuthService
+	Account  *AccountService
+	Category *CategoryService
 }
 
 func NewServices(repos *repository.Repositories, jwtAuth auth.AuthService) *Services {
 	return &Services{
-		Auth:    NewAuthService(repos.User, jwtAuth),
-		User:    NewUserService(repos.User),
-		Account: NewAccountService(repos.Account),
+		Auth:     NewAuthService(repos.User, jwtAuth),
+		User:     NewUserService(repos.User),
+		Account:  NewAccountService(repos.Account),
+		Category: NewCategoryService(repos.Category),
 	}
 }

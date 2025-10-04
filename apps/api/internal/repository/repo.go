@@ -8,15 +8,17 @@ import (
 )
 
 type Repositories struct {
-	User    domain.UserRepository
-	Account domain.AccountRepository
+	User     domain.UserRepository
+	Account  domain.AccountRepository
+	Category domain.CategoryRepository
 }
 
 func NewRepositories(conn *sql.DB) *Repositories {
 	queries := db.New(conn)
 
 	return &Repositories{
-		User:    NewUserRepository(queries),
-		Account: NewAccountRepository(queries),
+		User:     NewUserRepository(queries),
+		Account:  NewAccountRepository(queries),
+		Category: NewCategoryRepository(queries),
 	}
 }
