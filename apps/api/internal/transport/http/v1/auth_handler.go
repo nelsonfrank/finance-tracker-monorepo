@@ -7,6 +7,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/nelsonfrank/backend-api-go/internal/dto"
 	"github.com/nelsonfrank/backend-api-go/internal/services"
+	"github.com/nelsonfrank/backend-api-go/internal/utils"
 	"github.com/nelsonfrank/backend-api-go/internal/validator"
 )
 
@@ -42,5 +43,5 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
-	json.NewEncoder(w).Encode(u)
+	utils.WriteJSON(w, http.StatusOK, u)
 }

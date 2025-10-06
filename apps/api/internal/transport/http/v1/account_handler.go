@@ -52,7 +52,7 @@ func (h *AccountHandler) CreateAccount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.NewEncoder(w).Encode(createdAccount)
+	utils.WriteJSON(w, http.StatusCreated, createdAccount)
 }
 
 func (h *AccountHandler) GetAccountByID(w http.ResponseWriter, r *http.Request) {
@@ -68,7 +68,7 @@ func (h *AccountHandler) GetAccountByID(w http.ResponseWriter, r *http.Request) 
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
-	json.NewEncoder(w).Encode(account)
+	utils.WriteJSON(w, http.StatusOK, account)
 }
 
 func (h *AccountHandler) ListAccounts(w http.ResponseWriter, r *http.Request) {
@@ -85,7 +85,7 @@ func (h *AccountHandler) ListAccounts(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	json.NewEncoder(w).Encode(accounts)
+	utils.WriteJSON(w, http.StatusOK, accounts)
 }
 
 func (h *AccountHandler) UpdateAccount(w http.ResponseWriter, r *http.Request) {
@@ -122,7 +122,7 @@ func (h *AccountHandler) UpdateAccount(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	json.NewEncoder(w).Encode(updatedAccount)
+	utils.WriteJSON(w, http.StatusOK, updatedAccount)
 }
 
 func (h *AccountHandler) DeleteAccount(w http.ResponseWriter, r *http.Request) {
@@ -148,7 +148,7 @@ func (h *AccountHandler) DeleteAccount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.NewEncoder(w).Encode(map[string]interface{}{
+	utils.WriteJSON(w, http.StatusOK, map[string]interface{}{
 		"message": "account deleted successfully",
 	})
 }
