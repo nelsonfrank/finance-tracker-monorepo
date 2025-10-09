@@ -52,6 +52,38 @@ func (s *AuthService) Login(email, password string) (*dto.LoginResponseDTO, erro
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 		ExpiresIn:    time.Minute * 120,
-		User:         u,
+		User: dto.User{
+			ID:           u.ID,
+			Email:        u.Email,
+			FirstName:    u.FirstName,
+			LastName:     u.LastName,
+			PasswordHash: u.PasswordHash,
+		},
+	}, nil
+}
+
+func (s *AuthService) Signup(payload dto.SignupRequestDTO) (*dto.SignupResponseDTO, error) {
+	_, err := s.Repo.GetByEmail(payload.Email)
+	if err == nil {
+		return nil, errors.New("user already exists")
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(payload.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return nil, err
+	}
+
+	u, err := s.Repo.Create(payload.FirstName, payload.LastName, payload.Email, string(hashedPassword))
+	if err != nil {
+		return nil, err
+	}
+
+	return &dto.SignupResponseDTO{
+		User: dto.User{
+			ID:        u.ID,
+			Email:     u.Email,
+			FirstName: u.FirstName,
+			LastName:  u.LastName,
+		},
 	}, nil
 }
