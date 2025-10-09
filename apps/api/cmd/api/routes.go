@@ -22,6 +22,7 @@ func (app *application) mount() http.Handler {
 			r.Mount("/users", v1.NewUserHandler(app.services.User).Routes())
 			r.Mount("/accounts", v1.NewAccountHandler(app.services.Account).Routes())
 			r.Mount("/categories", v1.NewCategoryHandler(app.services.Category).Routes())
+			r.Mount("/transactions", v1.NewTransactionHandler(app.services.Transaction).Routes())
 		})
 	})
 
