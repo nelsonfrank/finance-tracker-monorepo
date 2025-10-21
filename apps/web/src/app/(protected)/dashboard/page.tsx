@@ -1,6 +1,5 @@
 "use client"
 
-import { DashboardHeader } from "@/components/dashboard/dashboard-header"
 import { OverviewCards } from "@/components/dashboard/overview-cards"
 import { FinancialChart } from "@/components/dashboard/financial-chart"
 import { RecentTransactions } from "@/components/dashboard/recent-transactions"
@@ -11,9 +10,12 @@ import { QuickActions } from "@/components/dashboard/quick-actions"
 export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-background">
-      <DashboardHeader />
+      <main className="container mx-auto px-6 py-8">
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
+          <p className="text-muted-foreground">Welcome back! Here's your financial overview.</p>
+        </div>
 
-      <main className="container mx-auto px-4 py-8">
         <div className="flex flex-col gap-8">
           <OverviewCards />
 
