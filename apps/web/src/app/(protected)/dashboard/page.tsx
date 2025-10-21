@@ -1,23 +1,39 @@
 "use client"
-import { useEffect } from "react";
-import { userDashboardAPI } from "@/data/backend/api/dashboard";
-import { Button } from "@/components/ui/button";
+
+import { DashboardHeader } from "@/components/dashboard/dashboard-header"
+import { OverviewCards } from "@/components/dashboard/overview-cards"
+import { FinancialChart } from "@/components/dashboard/financial-chart"
+import { RecentTransactions } from "@/components/dashboard/recent-transactions"
+import { SavingsGoals } from "@/components/dashboard/savings-goals"
+import { InvestmentPortfolio } from "@/components/dashboard/investment-portfolio"
+import { QuickActions } from "@/components/dashboard/quick-actions"
 
 export default function DashboardPage() {
-  useEffect(() => {
-    fetchData();
-  }, []);
+  return (
+    <div className="min-h-screen bg-background">
+      <DashboardHeader />
 
-  async function fetchData() {
-  try {
-    const data = await userDashboardAPI();
-    console.log(data);
-  } catch (error) {
-    console.log({ error });
-  }
-  }
+      <main className="container mx-auto px-4 py-8">
+        <div className="flex flex-col gap-8">
+          <OverviewCards />
 
-  return <div>
-    <Button onClick={fetchData}>Fetch Data</Button>
-  </div>;
+          <div className="grid gap-8 lg:grid-cols-3">
+            <div className="lg:col-span-2">
+              <FinancialChart />
+            </div>
+            <div>
+              <QuickActions />
+            </div>
+          </div>
+
+          <div className="grid gap-8 lg:grid-cols-2">
+            <SavingsGoals />
+            <InvestmentPortfolio />
+          </div>
+
+          <RecentTransactions />
+        </div>
+      </main>
+    </div>
+  )
 }

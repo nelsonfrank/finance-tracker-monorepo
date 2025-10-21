@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button"
 import { Wallet } from "lucide-react"
-import Link from "next/link"
 
 export function Header() {
   return (
@@ -35,16 +34,12 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-3">
-          <Link href="/auth/login">
-            <Button variant="ghost" size="sm" className="hidden sm:inline-flex">
-              Sign In
-            </Button>
-          </Link>
-          <Link href="/auth/signup">
-            <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
-              Get Started
-            </Button>
-          </Link>
+          <Button variant="ghost" size="sm" className="hidden sm:inline-flex">
+            Sign In
+          </Button>
+          <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
+            Get Started
+          </Button>
         </div>
       </div>
     </header>
