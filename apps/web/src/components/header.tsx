@@ -36,7 +36,7 @@ export function Header() {
 
         <div className="flex items-center gap-3">
           <Link href="/auth/login">
-            <Button variant="ghost" size="sm" className="hidden sm:inline-flex" >
+            <Button variant="ghost" size="sm" className="hidden sm:inline-flex">
               Sign In
             </Button>
           </Link>

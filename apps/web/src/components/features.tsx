@@ -1,7 +1,30 @@
+"use client"
+
 import { Card, CardContent } from "@/components/ui/card"
 import { TrendingUp, PiggyBank, Wallet, BarChart3, Shield, Smartphone } from "lucide-react"
+import { useEffect, useRef, useState } from "react"
 
 export function Features() {
+  const [isVisible, setIsVisible] = useState(false)
+  const sectionRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true)
+        }
+      },
+      { threshold: 0.1 },
+    )
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current)
+    }
+
+    return () => observer.disconnect()
+  }, [])
+
   const features = [
     {
       icon: Wallet,
@@ -42,22 +65,37 @@ export function Features() {
   ]
 
   return (
-    <section id="features" className="border-b border-border bg-background py-20 md:py-32">
+    <section ref={sectionRef} id="features" className="border-b border-border bg-background py-20 md:py-32">
       <div className="container mx-auto px-4">
         <div className="mb-16 flex flex-col items-center text-center">
-          <h2 className="text-balance text-3xl font-bold text-foreground md:text-4xl lg:text-5xl">
+          <h2
+            className={`text-balance text-3xl font-bold text-foreground transition-all duration-700 md:text-4xl lg:text-5xl ${
+              isVisible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
+            }`}
+          >
             Everything You Need to Master Your Money
           </h2>
-          <p className="mt-4 max-w-2xl text-pretty text-lg text-muted-foreground">
+          <p
+            className={`mt-4 max-w-2xl text-pretty text-lg text-muted-foreground transition-all duration-700 ${
+              isVisible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
+            }`}
+            style={{ transitionDelay: "100ms" }}
+          >
             Powerful features designed to give you complete visibility and control over your financial life.
           </p>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {features.map((feature, index) => (
-            <Card key={index} className="border-border bg-card transition-all hover:shadow-lg">
+            <Card
+              key={index}
+              className={`border-border bg-card transition-all duration-700 hover:shadow-lg ${
+                isVisible ? "scale-100 opacity-100" : "scale-95 opacity-0"
+              }`}
+              style={{ transitionDelay: `${200 + index * 100}ms` }}
+            >
               <CardContent className="flex flex-col gap-4 p-6">
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-accent/10">
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-accent/10 transition-transform duration-300 hover:scale-110">
                   <feature.icon className="h-6 w-6 text-accent" />
                 </div>
                 <h3 className="text-xl font-semibold text-card-foreground">{feature.title}</h3>
