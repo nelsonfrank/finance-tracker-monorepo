@@ -23,7 +23,7 @@ import {
 } from "./ui/form";
 
 const forgotPasswordFormSchema = z.object({
-  email: z.string().email(),
+  email: z.email(),
 });
 
 export function ForgotPasswordForm({
