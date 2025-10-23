@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
 import { Target, Plus, TrendingUp, Calendar, DollarSign } from "lucide-react"
+import { Line, LineChart, Bar, BarChart, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer } from "recharts"
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 
 const savingsGoals = [
   {
@@ -45,6 +47,21 @@ const savingsGoals = [
     icon: "🏠",
   },
 ]
+
+const savingsProgressData = [
+  { month: "Sep", amount: 15000 },
+  { month: "Oct", amount: 18500 },
+  { month: "Nov", amount: 22000 },
+  { month: "Dec", amount: 25800 },
+  { month: "Jan", amount: 31000 },
+]
+
+const goalComparisonData = savingsGoals.map((goal) => ({
+  name: goal.name,
+  current: goal.current,
+  target: goal.target,
+  progress: ((goal.current / goal.target) * 100).toFixed(0),
+}))
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -120,6 +137,76 @@ export default function SavingsPage() {
               <CardContent>
                 <div className="text-2xl font-bold">{overallProgress.toFixed(1)}%</div>
                 <Progress value={overallProgress} className="mt-2" />
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          <motion.div variants={itemVariants} className="grid gap-6 md:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>Savings Growth</CardTitle>
+                <CardDescription>Total savings progress over the last 5 months</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ChartContainer
+                  config={{
+                    amount: {
+                      label: "Total Saved",
+                      color: "hsl(var(--chart-1))",
+                    },
+                  }}
+                  className="h-[300px]"
+                >
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={savingsProgressData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="month" />
+                      <YAxis />
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <Line
+                        type="monotone"
+                        dataKey="amount"
+                        stroke="var(--color-amount)"
+                        strokeWidth={3}
+                        dot={{ r: 4 }}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </ChartContainer>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Goal Progress Comparison</CardTitle>
+                <CardDescription>Current vs target amounts for each goal</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ChartContainer
+                  config={{
+                    current: {
+                      label: "Current",
+                      color: "hsl(var(--chart-1))",
+                    },
+                    target: {
+                      label: "Target",
+                      color: "hsl(var(--chart-3))",
+                    },
+                  }}
+                  className="h-[300px]"
+                >
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={goalComparisonData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" angle={-15} textAnchor="end" height={80} />
+                      <YAxis />
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <Legend />
+                      <Bar dataKey="current" fill="var(--color-current)" radius={[4, 4, 0, 0]} />
+                      <Bar dataKey="target" fill="var(--color-target)" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </ChartContainer>
               </CardContent>
             </Card>
           </motion.div>

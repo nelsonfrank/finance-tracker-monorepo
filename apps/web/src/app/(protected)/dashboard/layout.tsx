@@ -1,5 +1,7 @@
 import type React from "react"
 import { Sidebar } from "@/components/dashboard/sidebar"
+import { FinanceProvider } from "@/lib/finance-context"
+import { Toaster } from "@/components/ui/sonner"
 
 export default function DashboardLayout({
   children,
@@ -7,9 +9,12 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="flex min-h-screen">
-      <Sidebar />
-      <div className="flex-1 pl-[240px]">{children}</div>
-    </div>
+    <FinanceProvider>
+      <div className="flex min-h-screen">
+        <Sidebar />
+        <div className="flex-1 pl-[240px]">{children}</div>
+      </div>
+      <Toaster />
+    </FinanceProvider>
   )
 }

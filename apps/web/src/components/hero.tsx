@@ -97,7 +97,7 @@ export function Hero() {
               style={{ transitionDelay: "600ms" }}
             >
               <img
-                src="/modern-finance-app-dashboard-showing-income-expens.jpg"
+                src="/hero.jpg"
                 alt="FinanceFlow App Dashboard"
                 className="h-auto w-full rounded-lg"
               />

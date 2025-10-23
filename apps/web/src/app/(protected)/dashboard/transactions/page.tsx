@@ -9,6 +9,19 @@ import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { ArrowUpRight, ArrowDownRight, Search, Filter, Download, Plus } from "lucide-react"
+import {
+  Line,
+  LineChart,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Legend,
+  ResponsiveContainer,
+  Pie,
+  PieChart,
+  Cell,
+} from "recharts"
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 
 const transactions = [
   { id: 1, date: "2024-01-15", description: "Salary Deposit", category: "Income", amount: 5000, type: "income" },
@@ -28,6 +41,27 @@ const transactions = [
   { id: 8, date: "2024-01-08", description: "Gas Station", category: "Transportation", amount: -45.0, type: "expense" },
   { id: 9, date: "2024-01-07", description: "Online Course", category: "Education", amount: -99.0, type: "expense" },
   { id: 10, date: "2024-01-06", description: "Consulting Fee", category: "Income", amount: 1200, type: "income" },
+]
+
+const spendingTrends = [
+  { date: "Jan 6", income: 1200, expenses: 0 },
+  { date: "Jan 7", income: 0, expenses: 99 },
+  { date: "Jan 8", income: 0, expenses: 45 },
+  { date: "Jan 9", income: 0, expenses: 65 },
+  { date: "Jan 10", income: 150, expenses: 0 },
+  { date: "Jan 11", income: 0, expenses: 85 },
+  { date: "Jan 12", income: 800, expenses: 0 },
+  { date: "Jan 13", income: 0, expenses: 16 },
+  { date: "Jan 14", income: 0, expenses: 121 },
+  { date: "Jan 15", income: 5000, expenses: 0 },
+]
+
+const categoryBreakdown = [
+  { name: "Food", value: 186, color: "#f97316" },
+  { name: "Entertainment", value: 16, color: "#8b5cf6" },
+  { name: "Utilities", value: 85, color: "#3b82f6" },
+  { name: "Transportation", value: 45, color: "#10b981" },
+  { name: "Education", value: 99, color: "#f59e0b" },
 ]
 
 const containerVariants = {
@@ -107,6 +141,79 @@ export default function TransactionsPage() {
               <CardContent>
                 <div className="text-2xl font-bold">${(totalIncome - totalExpenses).toLocaleString()}</div>
                 <p className="text-xs text-muted-foreground">This month</p>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          <motion.div variants={itemVariants} className="grid gap-6 md:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>Spending Trends</CardTitle>
+                <CardDescription>Daily income vs expenses over the last 10 days</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ChartContainer
+                  config={{
+                    income: {
+                      label: "Income",
+                      color: "hsl(var(--chart-1))",
+                    },
+                    expenses: {
+                      label: "Expenses",
+                      color: "hsl(var(--chart-2))",
+                    },
+                  }}
+                  className="h-[300px]"
+                >
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={spendingTrends}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="date" />
+                      <YAxis />
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <Legend />
+                      <Line type="monotone" dataKey="income" stroke="var(--color-income)" strokeWidth={2} />
+                      <Line type="monotone" dataKey="expenses" stroke="var(--color-expenses)" strokeWidth={2} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </ChartContainer>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Expense Breakdown</CardTitle>
+                <CardDescription>Spending by category this month</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ChartContainer
+                  config={{
+                    value: {
+                      label: "Amount",
+                    },
+                  }}
+                  className="h-[300px]"
+                >
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={categoryBreakdown}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                        outerRadius={80}
+                        fill="#8884d8"
+                        dataKey="value"
+                      >
+                        {categoryBreakdown.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </ChartContainer>
               </CardContent>
             </Card>
           </motion.div>
