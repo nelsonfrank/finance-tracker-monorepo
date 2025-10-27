@@ -21,8 +21,9 @@ import {
   FormControl,
   FormMessage,
 } from "./ui/form";
-import * as API from "@/data/backend/api";
 import { useRouter } from "next/navigation";
+import { signupAPI } from "@/services/auth/mutation";
+import { safeAsync } from "@/utils/api";
 
 const signupFormSchema = z
   .object({
@@ -55,14 +56,19 @@ export function SignupForm({
   });
 
   async function onSubmit(values: z.infer<typeof signupFormSchema>) {
-    console.log(values);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { confirmPassword, ...other } = values;
-    const payload = other;
-    const res = await API.registerUserAPI(payload);
-    if (res && res.data) {
-      router.push("/auth/login");
+    const res = await safeAsync(() => signupAPI({
+      email: values.email,
+      password: values.password,
+      first_name: values.first_name,
+      last_name: values.last_name
+    }));
+
+    console.log(res)
+    if(res.error){
+      console.log(res.error)
+      return;
     }
+    router.push("/auth/login");
   }
 
   return (

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/cors"
 	"github.com/nelsonfrank/backend-api-go/internal/dto"
 	v1 "github.com/nelsonfrank/backend-api-go/internal/transport/http/v1"
 	v2 "github.com/nelsonfrank/backend-api-go/internal/transport/http/v2"
@@ -13,6 +14,16 @@ import (
 
 func (app *application) mount() http.Handler {
 	r := chi.NewRouter()
+
+	// cors
+	r.Use(cors.Handler(cors.Options{
+		AllowedOrigins:   []string{"https://*", "http://*"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		ExposedHeaders:   []string{"Link"},
+		AllowCredentials: true,
+		MaxAge:           300,
+	}))
 
 	// v1 routes
 	r.Route("/api/v1", func(r chi.Router) {

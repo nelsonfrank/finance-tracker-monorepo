@@ -28,11 +28,9 @@ export interface refreshTokenDTO {
   refresh_token: string
 }
 
-export const loginAPI = (payload: loginPayload): Promise<AxiosResponse<loginResponse>> => {
-  return tryCatchWrapper<AxiosResponse<loginResponse>>(async () => {
-    const data = await Axios.post("v1/auth/login", payload);
-    return data
-  });
+export const loginAPI = async (payload: loginPayload): Promise<AxiosResponse<loginResponse>> => {
+    const response = await Axios.post("v1/auth/login", payload);
+    return response
 };
 
 export const registerUserAPI = (

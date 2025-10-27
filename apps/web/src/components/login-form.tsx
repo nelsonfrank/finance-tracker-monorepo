@@ -60,8 +60,7 @@ export function LoginForm({
       ...values,
       redirect: true,
       callbackUrl: params.get("callbackUrl") || "/dashboard"
-  })
-
+    })
   }
 
  

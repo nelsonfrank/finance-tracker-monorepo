@@ -1,7 +1,9 @@
-import { loginAPI, refreshTokenAPI } from "@/data/backend/api"
+import { refreshTokenAPI } from "@/data/backend/api"
+import { loginAPI } from "@/services/auth/mutation"
 import type { DefaultSession, DefaultUser, NextAuthOptions } from "next-auth"
 import { JWT } from "next-auth/jwt"
 import Credentials from "next-auth/providers/credentials"
+import { safeAsync } from "./api"
 
 
 declare module "next-auth" {
@@ -17,8 +19,6 @@ declare module "next-auth" {
     access_token_expires: string
     refresh_token: string
   }
-
-  
 }
 
 declare module "next-auth/jwt" {
@@ -34,7 +34,7 @@ async function refreshAccessToken(token: JWT) {
   try {
    const response = await refreshTokenAPI({refresh_token: token.refresh_token ?? ""})
     
-    const { access_token, access_token_expires, refresh_token }= response.data;
+    const { access_token, access_token_expires, refresh_token } = response.data;
     console.log({response})
     return {
       ...token,
@@ -43,7 +43,7 @@ async function refreshAccessToken(token: JWT) {
       refresh_token: refresh_token ?? token.refresh_token, // Fall back to old refresh token
     }
   } catch (error) {
-    console.log(error)
+    console.log({error})
 
     return {
       ...token,
@@ -62,28 +62,26 @@ export const authConfigs = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null
-          try {
-            const {email, password} = credentials;
-            const {data} = await loginAPI({email, password})
-            
-            if (!data) return null
-          
-            const {user, access_token, refresh_token, access_token_expires} = data;
-
-            return {
-                id: String(user.ID),
-                email: user.email,
-                name: `${user.first_name} ${user.last_name}`,
-                access_token: access_token,
-                access_token_expires: access_token_expires,
-                refresh_token: refresh_token
-            }
-          } catch (error) {
-              if (error instanceof Error) {
-                throw new Error(error.message || "Something went wrong");
-              }
-              throw new Error("An unexpected error occurred");
+        const {data, error} = await safeAsync(() => loginAPI({email: credentials.email, password: credentials.password}))
+          console.log({data, error: error?.message})
+        if (error) {
+          if (error instanceof Error) {
+            throw new Error(error.message || "Something went wrong");
           }
+          throw new Error("An unexpected error occurred");
+      }
+            
+      const {user, access_token, refresh_token, expires_in} = data;
+
+      return {
+          id: String(user.id),
+          email: user.email,
+          name: `${user.first_name} ${user.last_name}`,
+          access_token: access_token,
+          access_token_expires: expires_in,
+          refresh_token: refresh_token
+      }
+           
       }
     })
   ],
@@ -99,7 +97,6 @@ export const authConfigs = {
           token.access_token = user.access_token
           token.access_token_expires = user.access_token_expires ?? ''
           token.refresh_token = user.refresh_token
-          
 
           return token
         }
